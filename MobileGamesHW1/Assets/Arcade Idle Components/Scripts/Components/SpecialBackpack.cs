@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using NaughtyAttributes;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace BaranovskyStudio
 {
     [AddComponentMenu("Arcade Idle Components/Special Backpack", 0)]
-    public class SpecialBackpack : MonoBehaviour
+    public class SpecialBackpack : NetworkBehaviour
     {
+        public Transform test;
         public enum ResourceType
         {
             None,
@@ -43,19 +45,9 @@ namespace BaranovskyStudio
 
         private void Start()
         {
-            CheckForErrors();
+
         }
-        
-        private void CheckForErrors()
-        {
-            if (Resources.Load<Settings>(Constants.SETTINGS).ShowWarnings)
-            {
-                if (_resources.Length == 0)
-                {
-                    Debug.LogError("Special Backpack: resources settings is empty.");
-                }
-            }
-        }
+   
 
         private void DestroyItems()
         {
@@ -101,6 +93,7 @@ namespace BaranovskyStudio
         /// </summary>
         public void AddItems(int count, ResourceType resourceType)
         {
+
             if (ShowedItemsType == resourceType) //Can add only if resource type match
             {
                 ShowedItemsType = resourceType;
@@ -121,6 +114,11 @@ namespace BaranovskyStudio
         public void RemoveItems(int count)
         {
             ItemsCount -= count;
+        }
+
+        public void RemoveItems()
+        {
+            ItemsCount = 0;
         }
 
         /// <summary>

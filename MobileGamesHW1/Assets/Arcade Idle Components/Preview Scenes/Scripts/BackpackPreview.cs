@@ -9,7 +9,7 @@ namespace BaranovskyStudio.Example
         
         private void Start()
         {
-            _backpack = GetComponent<Backpack>();
+            //_backpack = GetComponent<Backpack>();
             StartCoroutine(Loop());
         }
         

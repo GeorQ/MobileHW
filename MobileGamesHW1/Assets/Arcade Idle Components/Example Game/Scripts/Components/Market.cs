@@ -12,18 +12,13 @@ namespace BaranovskyStudio.SimpleGame
         [BoxGroup("LINKS")] [SerializeField] 
         private PriceItem _orangePrice;
 
-        [BoxGroup("UPGRADABLE ITEMS")] [SerializeField]
-        private UpgradableItem _appleUpgradableItem;
-        [BoxGroup("UPGRADABLE ITEMS")] [SerializeField]
-        private UpgradableItem _orangeUpgradableItem;
+
 
         public MarketItemSettings AppleSettings;
         public MarketItemSettings OrangeSettings;
 
         private void Awake()
         {
-            _appleUpgradableItem.OnUpgradeItem.AddListener(OnUpgradeApplePrice);
-            _orangeUpgradableItem.OnUpgradeItem.AddListener(OnUpgradeOrangePrice);
             _placement.OnEnterPlacement.AddListener(TryBuyFruit);
         }
 
@@ -46,7 +41,7 @@ namespace BaranovskyStudio.SimpleGame
             {
                 revenue = backpack.ItemsCount * OrangeSettings.Price;
             }
-            ResourcesSystem.Instance.AddResourceCount(ResourcesSystem.ResourceType.Banknotes, revenue);
+            go.GetComponent<PlayerPurse>().AddMoney(revenue);
             
             backpack.RemoveItems(backpack.ItemsCount);
         }

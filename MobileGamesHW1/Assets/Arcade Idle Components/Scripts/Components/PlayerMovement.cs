@@ -1,92 +1,102 @@
 using NaughtyAttributes;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace BaranovskyStudio
 {
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(CapsuleCollider))]
-    [RequireComponent(typeof(PlayerAnimations))]
     [AddComponentMenu("Arcade Idle Components/Player Movement", 0)]
-    public class PlayerMovement : MonoBehaviour
-    {
-        private enum MovementType
-        {
-            MoveAndRotate,
-            RotateAndMove,
-        }
-        
-        [BoxGroup("CONTROLS")] [SerializeField] [Required("Drag and drop joystick here.")]
-        private VariableJoystick _joystick;
-        [BoxGroup("CONTROLS")] [SerializeField] 
-        private MovementType _movementType;
 
-        [BoxGroup("MOVEMENT")] [SerializeField] 
-        private float _movementSpeed = 10f;        
-        [BoxGroup("MOVEMENT")] [SerializeField] 
+    public class PlayerMovement : NetworkBehaviour
+    {
+        [BoxGroup("CONTROLS")] [SerializeField] [Required("Drag and drop joystick here.")]
+        private VariableJoystick joystick;
+
+        [BoxGroup("MOVEMENT")] [SerializeField]
+        private float _movementSpeed = 10f;
+        [BoxGroup("MOVEMENT")] [SerializeField]
         private float _rotationSpeed = 6f;
-        
-        private Rigidbody _rigidbody;
-        private PlayerAnimations _playerAnimations;
+
+        private Rigidbody playerRb;
+        private Animator animator;
+        private bool isGrounded;
+        public SpecialBackpack specialBackpack;
+        public Vector3 lastCheckPoint;
+        public LayerMask groundMask;
 
         [Button]
         private void TryFindJoystick()
         {
-            _joystick = FindObjectOfType<VariableJoystick>();
+            joystick = FindObjectOfType<VariableJoystick>();
         }
-        
+
         private void Start()
         {
-            CheckForErrors();
-            _rigidbody = GetComponent<Rigidbody>();
-            _playerAnimations = GetComponent<PlayerAnimations>();
+            playerRb = GetComponent<Rigidbody>();
+            animator = GetComponent<Animator>();
         }
-        
-        private void CheckForErrors()
+
+        private void Update()
         {
-            if (Resources.Load<Settings>(Constants.SETTINGS).ShowWarnings)
+            if (!IsOwner)
             {
-                if (_joystick == null)
-                {
-                    Debug.LogError("Player Movement: joystick is null.");
-                }
+                return;
             }
+
+            CheckDrag();
+        }
+
+        public void GameOverScreen()
+        {
+            SpawnManager.instance.gameOverScreen.SetActive(true);
+        }
+
+        public void WinScreen()
+        {
+            SpawnManager.instance.winScreen.SetActive(true);
+        }
+
+        private void CheckDrag()
+        {
+            isGrounded = Physics.OverlapSphere(transform.position + new Vector3(0, 0.2f, 0), 0.7f, groundMask).Length >= 1;
+            if (isGrounded)
+            {
+                _movementSpeed = 10;
+                playerRb.drag = 12;
+            }
+            else
+            {
+                Debug.Log("Not Grounded");
+                _movementSpeed = 1;
+                playerRb.drag = 0;
+            }
+        }
+
+        private void OnDrawGizmos()
+        {
+            //Gizmos.DrawSphere(transform.position + new Vector3(0, 0.2f, 0) , 0.7f);
         }
 
         private void FixedUpdate()
         {
-            var direction = new Vector3(_joystick.Direction.x, 0f, _joystick.Direction.y); //Convert direction to Vector3
-
-            if (direction.x != 0 || direction.y != 0) //If direction.x or direction.y is 0 means joystick isn't using
+            if (!joystick || !IsOwner)
             {
-                if (_movementType == MovementType.MoveAndRotate)
-                {
-                    MoveAndRotate(direction, direction.magnitude);
-                }
-                else
-                {
-                    RotateAndMove(direction, direction.magnitude);
-                }
+                return;
             }
-            else
+            Vector3 direction = new Vector3(joystick.Direction.x, 0f, joystick.Direction.y); //Convert direction to Vector3
+
+            if ( (direction.x != 0 || direction.y != 0)  && isGrounded) //If direction.x or direction.y is 0 means joystick isn't using
             {
-                //_rigidbody.velocity = Vector3.zero; //Sets velocity to zero to avoid inertial motion
+                RotateAndMove(direction, direction.magnitude);
             }
-
-
-
-            _playerAnimations.UpdateAnimator(direction.magnitude);
-        }
-
-        private void MoveAndRotate(Vector3 direction, float speedMultiplier)
-        {
-            _rigidbody.velocity = direction * _movementSpeed * speedMultiplier;
-            _rigidbody.MoveRotation(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(direction), _rotationSpeed)); 
+            animator.SetFloat("SpeedMultiplier", direction.magnitude);
         }
 
         private void RotateAndMove(Vector3 direction, float speedMultiplier)
         {
-            _rigidbody.velocity = transform.forward * _movementSpeed * speedMultiplier;
-            _rigidbody.MoveRotation(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(direction), _rotationSpeed));
+            playerRb.velocity = transform.forward * _movementSpeed * speedMultiplier;
+            playerRb.MoveRotation(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(direction), _rotationSpeed));
         }
     }
 }

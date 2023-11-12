@@ -40,7 +40,7 @@ namespace BaranovskyStudio
         /// <param name="speedMultiplier">Speed coefficient of a player from 0 to 1.</param>
         public void UpdateAnimator(float speedMultiplier)
         {
-            _animator.SetFloat(SPEED_MULTIPLIER, speedMultiplier);
+            _animator.SetFloat("SpeedMultiplier", speedMultiplier);
         }
     }
 }

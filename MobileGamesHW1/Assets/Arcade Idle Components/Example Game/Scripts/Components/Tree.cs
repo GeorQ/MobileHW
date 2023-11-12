@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using NaughtyAttributes;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace BaranovskyStudio.SimpleGame
 {
-    public class Tree : MonoBehaviour
+    public class Tree : NetworkBehaviour
     {
         [BoxGroup("LINKS")] [SerializeField] 
         private MaterialChanger[] _materialChangers;
+
         [BoxGroup("LINKS")] [SerializeField] 
         private Transform[] _fruitSpawnPoints;
         [BoxGroup("LINKS")] [SerializeField] 
         private ProgressBar _progressBar;
-        
         [BoxGroup("SETTINGS")] [SerializeField] 
         private GameObject _fruitPrefab;
 
@@ -22,21 +23,12 @@ namespace BaranovskyStudio.SimpleGame
         private bool _isUnlocked;
         private readonly List<Fruit> _spawnedFruit = new List<Fruit>();
         
-        private void Start()
+
+        public override void OnNetworkSpawn()
         {
-            var unlockableItem = GetComponent<UnlockableItem>();
-            
-            if (unlockableItem.IsUnlocked)
-            {
-                OnUnlock();
-            }
-            else
-            {
-                unlockableItem.OnUnlockItem.AddListener(OnUnlock);
-                ChangeMaterials(_isUnlocked);
-            }
+            OnUnlock();
         }
-        
+
         private void OnUnlock()
         {
             _isUnlocked = true;
@@ -96,6 +88,7 @@ namespace BaranovskyStudio.SimpleGame
         private void SpawnFruit()
         {
             var fruit = Instantiate(_fruitPrefab, _fruitSpawnPoints[_spawnedFruit.Count]).GetComponent<Fruit>();
+            fruit.GetComponent<NetworkObject>().Spawn();
             _spawnedFruit.Add(fruit);
         }
 

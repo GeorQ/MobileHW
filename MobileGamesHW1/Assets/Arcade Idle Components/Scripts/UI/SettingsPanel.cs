@@ -26,7 +26,7 @@ namespace BaranovskyStudio
 
         private void Start()
         {
-            AudioListener.volume = SaveSystem.Instance.Data.Sounds ? 1f : 0f;
+            //AudioListener.volume = SaveSystem.Instance.Data.Sounds ? 1f : 0f;
 
             CheckForErrors();
             
@@ -57,33 +57,33 @@ namespace BaranovskyStudio
 
         protected override void OnShow()
         {
-            UpdateSprites();
+            //UpdateSprites();
         }
 
         protected override void OnHide() {}
 
         private void UpdateSprites()
         {
-            if (SaveSystem.Instance == null) return;
-            _sounds.image.sprite = SaveSystem.Instance.Data.Sounds ? _soundsOn : _soundsOff;
-            _vibration.image.sprite = SaveSystem.Instance.Data.Vibration ? _vibrationOn : _vibrationOff;
+            //if (SaveSystem.Instance == null) return;
+            //_sounds.image.sprite = SaveSystem.Instance.Data.Sounds ? _soundsOn : _soundsOff;
+            //_vibration.image.sprite = SaveSystem.Instance.Data.Vibration ? _vibrationOn : _vibrationOff;
         }
 
         private void OnButtonSoundsClick()
         {
-            SaveSystem.Instance.Data.Sounds = !SaveSystem.Instance.Data.Sounds;
-            SaveSystem.Instance.SaveData();
+            //SaveSystem.Instance.Data.Sounds = !SaveSystem.Instance.Data.Sounds;
+            //SaveSystem.Instance.SaveData();
 
-            AudioListener.volume = SaveSystem.Instance.Data.Sounds ? 1f : 0f;
-            UpdateSprites();
+            //AudioListener.volume = SaveSystem.Instance.Data.Sounds ? 1f : 0f;
+            //UpdateSprites();
         }
         
         private void OnButtonVibrationClick()
         {
-            SaveSystem.Instance.Data.Vibration = !SaveSystem.Instance.Data.Vibration;
-            SaveSystem.Instance.SaveData();
+            //SaveSystem.Instance.Data.Vibration = !SaveSystem.Instance.Data.Vibration;
+            //SaveSystem.Instance.SaveData();
             
-            UpdateSprites();
+            //UpdateSprites();
         }
     }
 }

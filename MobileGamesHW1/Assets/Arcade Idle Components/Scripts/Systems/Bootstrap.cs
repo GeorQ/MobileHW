@@ -17,8 +17,7 @@ namespace Idle_Arcade_Components.Scripts.Systems
         public void GetObjectsForAwake()
         {
             _scriptsToInitializeOnAwake = FindObjectsByType<Initializable>(FindObjectsInactive.Include, FindObjectsSortMode.None).ToList();
-        }
-        
+        }        
         [Button]
         public void GetObjectsForStart()
         {

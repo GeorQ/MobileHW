@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bounce : MonoBehaviour
 {
-	public float force = 10f; //Force 10000f
+	public float force = 100f; //Force 10000f
 	public float stunTime = 0.5f;
 	private Vector3 hitDir;
 
@@ -12,22 +12,13 @@ public class Bounce : MonoBehaviour
 	{
 		foreach (ContactPoint contact in collision.contacts)
 		{
-			Debug.DrawRay(contact.point, contact.normal, Color.white);
+			Debug.DrawRay(contact.point, contact.normal * 10, Color.red);
 			if (collision.gameObject.tag == "Player")
 			{
-				hitDir = contact.normal;
-				collision.gameObject.GetComponent<CharacterControls>().HitPlayer(-hitDir * force, stunTime);
+				collision.gameObject.GetComponent<Rigidbody>().AddForce(-contact.normal * force, ForceMode.Impulse);
 				return;
 			}
 		}
-		/*if (collision.relativeVelocity.magnitude > 2)
-		{
-			if (collision.gameObject.tag == "Player")
-			{
-				//Debug.Log("Hit");
-				collision.gameObject.GetComponent<CharacterControls>().HitPlayer(-hitDir*force, stunTime);
-			}
-			//audioSource.Play();
-		}*/
+
 	}
 }
