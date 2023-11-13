@@ -20,15 +20,26 @@ public class PlayerPurse : NetworkBehaviour
         moneyText.text = playerMoney.ToString();
         if (playerMoney > 20)
         {
-            ulong wonId = OwnerClientId;
-            NetworkManager.Singleton.ConnectedClients[wonId].PlayerObject.transform.GetComponentInChildren<BaranovskyStudio.PlayerMovement>().WinScreen();
-            for (int i = 0; i < NetworkManager.Singleton.ConnectedClientsIds.Count; i++)
-            {
-                if (NetworkManager.Singleton.ConnectedClientsIds[i] != wonId)
-                {
-                    NetworkManager.Singleton.ConnectedClients[(ulong)i].PlayerObject.transform.GetComponentInChildren<BaranovskyStudio.PlayerMovement>().GameOverScreen();
-                }
-            }
+            SuperTestServerRpc();
+        }
+    }
+
+    [ServerRpc]
+    public void SuperTestServerRpc()
+    {
+        SuperTestClientRpc();
+    }
+
+    [ClientRpc]
+    private void SuperTestClientRpc()
+    {
+        if (playerMoney >= 20)
+        {
+            transform.GetComponent<BaranovskyStudio.PlayerMovement>().WinScreen();
+        }
+        else
+        {
+            transform.GetComponent<BaranovskyStudio.PlayerMovement>().GameOverScreen();
         }
     }
 }
