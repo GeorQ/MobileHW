@@ -1,11 +1,12 @@
 ﻿using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Events;
+using Unity.Netcode;
 
 namespace BaranovskyStudio
 {
     [AddComponentMenu("Arcade Idle Components/Trigger", 0)]
-    public class Trigger : MonoBehaviour
+    public class Trigger : NetworkBehaviour
     {
         [InfoBox("You can limit the tags on which the trigger will work.")]
         [SerializeField] 

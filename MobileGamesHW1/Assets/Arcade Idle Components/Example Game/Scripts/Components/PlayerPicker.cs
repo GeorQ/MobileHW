@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
+using Unity.Netcode;
 
 namespace BaranovskyStudio.SimpleGame
 {
-    public class PlayerPicker : MonoBehaviour
+    public class PlayerPicker : NetworkBehaviour
     {
         private SpecialBackpack _specialBackpack;
 
@@ -14,6 +15,7 @@ namespace BaranovskyStudio.SimpleGame
 
         private void TryPickUp(GameObject go)
         {
+
             if (_specialBackpack.IsBackpackFull()) return;
                 
             var fruit = go.GetComponent<Fruit>();
@@ -23,5 +25,6 @@ namespace BaranovskyStudio.SimpleGame
                 fruit.OnPickup?.Invoke(fruit);
             }
         }
+
     }
 }
