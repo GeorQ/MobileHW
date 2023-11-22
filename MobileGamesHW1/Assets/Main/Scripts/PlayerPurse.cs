@@ -16,6 +16,10 @@ public class PlayerPurse : NetworkBehaviour
 
     public void AddMoney(int ammount)
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         playerMoney += ammount;
         moneyText.text = playerMoney.ToString();
         if (playerMoney > 20)
@@ -24,7 +28,7 @@ public class PlayerPurse : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void SuperTestServerRpc()
     {
         SuperTestClientRpc();
